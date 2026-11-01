@@ -107,6 +107,7 @@ let
         suffix: cdn-perfprod.com,
         suffix: coursera.org,
         suffix: cyberia.is,
+        suffix: cloudflare.com,
         suffix: deezer.com,
         suffix: dub.co,
         suffix: edx.org,
