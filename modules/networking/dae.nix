@@ -138,6 +138,7 @@ let
         suffix: open.demonii.com,
         suffix: open.stealth.si,
         suffix: opentrackr.org,
+        suffix: openrouter.ai,
         suffix: ororo.tv,
         suffix: oup.com,
         suffix: oxfordlearnersdictionaries.com,
@@ -221,7 +222,10 @@ let
       
       #google
       domain(
-        geosite: youtube,
+        geosite: youtube
+      ) ->  proxy
+
+      domain(
         geosite: google,
         geosite: google-gemini,
 
