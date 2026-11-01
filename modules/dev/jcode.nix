@@ -2,16 +2,14 @@
 let
   jcodeConfigTemplate = apiKey: ''
     [provider]
-    default_provider = "cli-proxy-api"
-    default_model = "auto"
-    model_picker_providers = ["cli-proxy-api"]
+    default_provider = "omniroute"
+    model_picker_providers = ["omniroute"]
     openai_reasoning_effort = "high"
 
-    [providers.cli-proxy-api]
+    [providers.omniroute]
     type = "openai-compatible"
-    base_url = "http://localhost:8317/v1"
+    base_url = "http://localhost:8000/v1"
     api_key = "${apiKey}"
-    model = "auto"
     model_catalog = true
     supports_reasoning_effort = true
 
@@ -30,7 +28,7 @@ in
   flake.modules.nixos.jcode =
     { config, ... }:
     {
-      sops.secrets."ai-proxy" = { };
+      sops.secrets."omniroute" = { };
 
       systemd.tmpfiles.rules = [
         "d /home/tihdizer/.jcode 0700 tihdizer users -"
@@ -38,7 +36,7 @@ in
 
       sops.templates."jcode-config.toml" = {
         path = "/home/tihdizer/.jcode/config.toml";
-        content = jcodeConfigTemplate "${config.sops.placeholder."ai-proxy"}";
+        content = jcodeConfigTemplate "${config.sops.placeholder."omniroute"}";
         mode = "0600";
         owner = "tihdizer";
         group = "users";
