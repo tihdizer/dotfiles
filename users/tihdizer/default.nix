@@ -46,6 +46,7 @@
         fuzzel
         anki
         aven
+        telegram
       ])
       ++ [
         inputs.niri.homeModules.niri
