@@ -26,6 +26,7 @@
       dae
       throne
       ssh
+      mpv
 
       #= Virtualization
       qemu
