@@ -84,6 +84,8 @@
         "nvim.desktop" = [
           "text/plain"
           "text/markdown"
+          "text/x-nix"
+          "application/x-nix"
           "text/x-c"
           "text/x-c++"
           "text/x-python"
