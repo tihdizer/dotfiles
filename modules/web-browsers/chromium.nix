@@ -5,6 +5,7 @@ let
     "dnhpnfgdlenaccegplpojghhmaamnnfp" # Augmented Steam
     "eimadpbcbfnmbkopoojfekhnkhdbieeh" # Dark Reader
     "gmhgdiamihghcepkeapfoeakphffcdkk" # Merriam-Webster Dictionary
+    # "onljnjnbfggbdnobigopggefjpkoojjj" # Oxford Learner's Dictionary Lookup
     "akimgimeeoiognljlfchpbkpfbmeapkh" # Google Arts & Culture
     "ghbmnnjooekpmoecnnnilnnbdlolhkhi" # Google Docs Offline
     "aapbdbdomjkkjkaonfhkkikfgjllcleb" # Google Translate
@@ -14,7 +15,7 @@ let
     "kdbmhfkmnlmbkgbabkdealhhbfhlmmon" # SteamDB
     "dbepggeogbaibhgnhhndojpepiihcmeb" # Vimium
     # "hfjbmagddngcpeloejdejnfgbamkjaeg" # Vimium C
-    # "ijgkbcbalaekboipcmaefchfjpognmog" # VK Music Saver
+    "ijgkbcbalaekboipcmaefchfjpognmog" # VK Music Saver
     "gibipneadnbflmkebnmcbgjdkngkbklb" # Windowed
   ];
 in
@@ -22,6 +23,10 @@ in
   flake.modules.homeManager.chromium =
     { pkgs, ... }:
     {
+      home.packages = with pkgs; [
+        google-chrome
+      ];
+
       programs.chromium = {
         enable = true;
         package = pkgs.chromium;

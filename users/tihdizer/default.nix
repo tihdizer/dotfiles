@@ -21,8 +21,6 @@
         copyq
         dev
         firefox
-        chrome
-        chrome-server
         chromium
         bottom
         yazi
