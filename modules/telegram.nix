@@ -1,77 +1,78 @@
 { ... }:
+let
+  tele =
+    pkgs:
+    pkgs.buildGoModule rec {
+      pname = "tele";
+      version = "2.0.2";
+
+      src = pkgs.fetchFromGitHub {
+        owner = "sorokin-vladimir";
+        repo = "tele";
+        rev = "v${version}";
+        hash = "sha256-+/1gC1oGBQnYXfnB1AI/C0jScO36RCtGi9VnE+cb6bI=";
+      };
+
+      vendorHash = "sha256-eCWK0KmDdsZWMx4RIXyJ8chbG6wGfXTuS0jTF4eB02M=";
+
+      subPackages = [ "cmd/tele" ];
+
+      env.CGO_ENABLED = "0";
+
+      ldflags = [
+        "-s"
+        "-w"
+        "-X github.com/sorokin-vladimir/tele/internal/version.Version=${version}"
+      ];
+
+      doCheck = false;
+
+      meta = with pkgs.lib; {
+        description = "A terminal-native Telegram client built for keyboard-driven workflows";
+        homepage = "https://github.com/sorokin-vladimir/tele";
+        license = licenses.gpl3Only;
+        mainProgram = "tele";
+        platforms = platforms.unix;
+      };
+    };
+
+  telegramWeb =
+    pkgs:
+    let
+      app = pkgs.writeShellScriptBin "telegram-web" ''
+        exec ${pkgs.chromium}/bin/chromium --app=https://web.telegram.org "$@"
+      '';
+      desktopItem = pkgs.makeDesktopItem {
+        name = "telegram-web";
+        desktopName = "Telegram Web";
+        genericName = "Telegram Web Client";
+        exec = "telegram-web %U";
+        icon = "telegram";
+        terminal = false;
+        categories = [
+          "Network"
+          "InstantMessaging"
+          "Chat"
+        ];
+        startupWMClass = "chrome-web.telegram.org__-Default";
+      };
+    in
+    pkgs.symlinkJoin {
+      name = "telegram-web";
+      paths = [
+        app
+        desktopItem
+      ];
+    };
+in
 {
   flake.modules.homeManager.telegram =
     { pkgs, ... }:
     {
-      home.packages = with pkgs; [
-        telegram-desktop
-      ];
-
-      xdg.dataFile."TelegramDesktop/tdata/shortcuts-custom.json".text = builtins.toJSON [
-        {
-          command = "next_chat";
-          keys = "ctrl+j";
-        }
-        {
-          command = "previous_chat";
-          keys = "ctrl+k";
-        }
-
-        {
-          command = "previous_folder";
-          keys = "ctrl+h";
-        }
-        {
-          command = "next_folder";
-          keys = "ctrl+l";
-        }
-
-        {
-          command = "first_chat";
-          keys = "ctrl+alt+k";
-        }
-        {
-          command = "last_chat";
-          keys = "ctrl+alt+j";
-        }
-
-        {
-          command = "search";
-          keys = "ctrl+f";
-        }
-        {
-          command = "read_chat";
-          keys = "ctrl+r";
-        }
-        {
-          command = "archive_chat";
-          keys = "ctrl+shift+a";
-        }
-        {
-          command = "message_silently";
-          keys = "ctrl+shift+s";
-        }
-        {
-          command = "message_scheduled";
-          keys = "ctrl+shift+m";
-        }
-        {
-          command = "close_telegram";
-          keys = "ctrl+w";
-        }
-        {
-          command = "quit_telegram";
-          keys = "ctrl+q";
-        }
-
-        {
-          command = "show_contacts";
-          keys = "ctrl+shift+c";
-        }
-        {
-          command = "lock_telegram";
-          keys = "ctrl+shift+l";
-        }
+      home.packages = [
+        pkgs.telegram-desktop
+        (tele pkgs)
+        (telegramWeb pkgs)
       ];
     };
 }
