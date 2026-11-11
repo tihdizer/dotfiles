@@ -30,6 +30,9 @@
           hide-when-typing = true;
           # theme = config.stylix.cursor.name;
         };
+        overview = {
+          zoom = 0.5;
+        };
         layout = {
           empty-workspace-above-first = true;
           focus-ring.enable = false;
