@@ -45,6 +45,7 @@
         anki
         aven
         telegram
+        mako
       ])
       ++ [
         inputs.niri.homeModules.niri
