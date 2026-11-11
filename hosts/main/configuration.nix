@@ -19,6 +19,7 @@
       #= Dev
       jcode
       herdr
+      github
 
       #= Networking
       networkmanager

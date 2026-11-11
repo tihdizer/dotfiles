@@ -4,6 +4,7 @@
     imports = with inputs.self.modules.homeManager; [
       nix
       nvf
+      github
     ];
   };
 }
