@@ -18,7 +18,7 @@
       '';
     };
 
-  flake.modules.homeManager.github =
+  flake.modules.homeManager.tihdizer-github =
     { pkgs, ... }:
     {
       programs.gh = {

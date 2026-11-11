@@ -13,6 +13,7 @@
         tihdizer-niri
         tihdizer-userdirs
         tihdizer-git
+        tihdizer-github
         tihdizer-packages
         tihdizer-starship
         tihdizer-mime
