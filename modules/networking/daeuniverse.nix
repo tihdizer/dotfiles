@@ -1,6 +1,6 @@
 { inputs, ... }:
 let
-  daeConfigTemplate = sub1: sub2: sub3: ''
+  configTemplate = sub1: sub2: sub3: ''
     global {
       tproxy_port: 12345
       tproxy_port_protect: true
@@ -286,7 +286,8 @@ in
       sops.secrets.sub3 = { };
 
       sops.templates."dae-config.dae" = {
-        content = daeConfigTemplate 
+        content =
+          configTemplate
             config.sops.placeholder.sub1
             config.sops.placeholder.sub2
             config.sops.placeholder.sub3;
@@ -297,6 +298,50 @@ in
       systemd.services.dae = {
         restartTriggers = [
           config.sops.templates."dae-config.dae".path
+        ];
+        serviceConfig = {
+          Type = lib.mkForce "exec";
+          Restart = "on-failure";
+          RestartSec = "2s";
+        };
+      };
+    };
+
+  flake.modules.nixos.honk =
+    {
+      config,
+      pkgs,
+      lib,
+      ...
+    }:
+    {
+      imports = [
+        inputs.daeuniverse.nixosModules.honk
+      ];
+
+      services.honk-proxy = {
+        enable = true;
+        configFile = config.sops.templates."honk-config.dae".path;
+        package = inputs.daeuniverse.packages.${pkgs.stdenv.hostPlatform.system}.honk;
+      };
+
+      sops.secrets.sub1 = { };
+      sops.secrets.sub2 = { };
+      sops.secrets.sub3 = { };
+
+      sops.templates."honk-config.dae" = {
+        content =
+          configTemplate
+            config.sops.placeholder.sub1
+            config.sops.placeholder.sub2
+            config.sops.placeholder.sub3;
+        mode = "0600";
+        owner = "root";
+      };
+
+      systemd.services.honk = {
+        restartTriggers = [
+          config.sops.templates."honk-config.dae".path
         ];
         serviceConfig = {
           Type = lib.mkForce "exec";

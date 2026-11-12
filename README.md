@@ -49,7 +49,7 @@ This repository uses a decentralized dendritic module structure. Modules are sel
 - **Editors**: Neovim
 
 ### Networking & Virtualization
-- **Proxy & Routing**: `dae` (eBPF-based transparent proxy routing with GeoIP and domain routing rules)
+- **Proxy & Routing**: `dae` and `honk` via daeuniverse (eBPF-based transparent proxy routing with GeoIP and domain routing rules)
 - **Networking**: NetworkManager, SSH configurations, Throne
 - **Containers & Virtualization**: Podman, Docker, QEMU / KVM
 
@@ -71,7 +71,7 @@ This repository uses a decentralized dendritic module structure. Modules are sel
 │   └── main/               # Main desktop workstation configuration
 ├── modules/                # Modular feature components
 │   ├── dev/                # Neovim (nvf), Zed, Nix, Jcode, Herdr
-│   ├── networking/         # dae, networkmanager, ssh, firewall, throne
+│   ├── networking/         # daeuniverse (dae, honk), networkmanager, ssh, firewall, throne
 │   ├── niri/               # Niri Wayland compositor integrations
 │   ├── shell/              # Shells (zsh, fish, bash), Kitty, Tmux, CLI tools
 │   ├── system/             # Audio, Bluetooth, AMD GPU, bootloader, stylix
