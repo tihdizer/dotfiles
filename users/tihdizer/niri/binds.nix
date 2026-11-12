@@ -18,6 +18,7 @@
       niri = getExe config.programs.niri.package;
       jq = getExe pkgs.jq;
       tmux = getExe pkgs.tmux;
+      notifySend = getExe pkgs.libnotify;
       toggleFloatingApp =
         {
           name,
@@ -97,6 +98,34 @@
         appId = "btm";
         execCmd = "${term} --class btm -e ${getExe pkgs.bottom}";
       };
+      castWindow = getExe (
+        pkgs.writeShellScriptBin "niri-cast-window" ''
+          ${niri} msg action set-dynamic-cast-window
+          TITLE="$(${niri} msg -j focused-window 2>/dev/null | ${jq} -r '.title // .app_id // empty')"
+          if [ -n "$TITLE" ]; then
+            ${notifySend} -h string:synchronous:dynamic-cast -a "niri" -i video-display "Dynamic Cast" "Target: window ($TITLE)"
+          else
+            ${notifySend} -h string:synchronous:dynamic-cast -a "niri" -i video-display "Dynamic Cast" "Target: focused window"
+          fi
+        ''
+      );
+      castMonitor = getExe (
+        pkgs.writeShellScriptBin "niri-cast-monitor" ''
+          ${niri} msg action set-dynamic-cast-monitor
+          OUTPUT="$(${niri} msg -j workspaces 2>/dev/null | ${jq} -r '.[] | select(.is_focused == true) | .output // empty')"
+          if [ -n "$OUTPUT" ]; then
+            ${notifySend} -h string:synchronous:dynamic-cast -a "niri" -i video-display "Dynamic Cast" "Target: monitor ($OUTPUT)"
+          else
+            ${notifySend} -h string:synchronous:dynamic-cast -a "niri" -i video-display "Dynamic Cast" "Target: focused monitor"
+          fi
+        ''
+      );
+      castClear = getExe (
+        pkgs.writeShellScriptBin "niri-cast-clear" ''
+          ${niri} msg action clear-dynamic-cast-target
+          ${notifySend} -h string:synchronous:dynamic-cast -a "niri" -i video-display "Dynamic Cast" "Target cleared"
+        ''
+      );
     in
     {
       programs.niri.settings.binds =
@@ -206,9 +235,9 @@
             ];
 
             #= Dynamic Cast Target (Screencast)
-            "Mod+Ctrl+M".action = set-dynamic-cast-window;
-            "Mod+Shift+M".action = set-dynamic-cast-monitor;
-            "Mod+Ctrl+Shift+M".action = clear-dynamic-cast-target;
+            "Mod+Ctrl+M".action.spawn = [ castWindow ];
+            "Mod+Shift+M".action.spawn = [ castMonitor ];
+            "Mod+Ctrl+Shift+M".action.spawn = [ castClear ];
 
             #= Actions
             "Mod+W".action = toggle-column-tabbed-display;
