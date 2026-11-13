@@ -1,20 +1,20 @@
 { inputs, ... }:
 {
-  flake.modules.nixos.music =
+  flake.modules.nixos.mull =
     { pkgs, ... }:
     {
       imports = with inputs.self.modules.nixos; [
-        music-disko
-        music-hardware
-        music-locales
-        music-system
-        music-users
-        music-reverse-proxy
-        music-litestream
-        music-r2-mount
-        music-beets
-        music-filebrowser
-        music-aven-server
+        mull-disko
+        mull-hardware
+        mull-locales
+        mull-system
+        mull-users
+        mull-reverse-proxy
+        mull-litestream
+        mull-r2-mount
+        mull-beets
+        mull-filebrowser
+        mull-aven-server
 
         sops
         navidrome
@@ -30,7 +30,7 @@
         bottom
       ];
 
-      networking.hostName = "music";
+      networking.hostName = "mull";
 
       zramSwap = {
         enable = true;

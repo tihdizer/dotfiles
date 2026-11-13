@@ -1,6 +1,6 @@
 { ... }:
 {
-  flake.modules.nixos.music-r2-mount =
+  flake.modules.nixos.mull-r2-mount =
     {
       config,
       pkgs,
@@ -50,16 +50,16 @@
       programs.fuse.userAllowOther = true;
 
       sops.secrets.r2_account_id = {
-        sopsFile = ../../secrets/music-secrets.yaml;
+        sopsFile = ../../secrets/mull.yaml;
       };
       sops.secrets.r2_access_key_id = {
-        sopsFile = ../../secrets/music-secrets.yaml;
+        sopsFile = ../../secrets/mull.yaml;
       };
       sops.secrets.r2_secret_access_key = {
-        sopsFile = ../../secrets/music-secrets.yaml;
+        sopsFile = ../../secrets/mull.yaml;
       };
       sops.secrets.r2_bucket = {
-        sopsFile = ../../secrets/music-secrets.yaml;
+        sopsFile = ../../secrets/mull.yaml;
       };
 
       sops.templates."rclone-r2.conf" = {

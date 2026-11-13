@@ -21,7 +21,7 @@ This repository uses a decentralized dendritic module structure. Modules are sel
 ### Core System
 - **OS**: NixOS (Unstable channel)
 - **Architecture**: `x86_64-linux`
-- **Host**: `main` (AMD Ryzen 7 5700G + Radeon Vega 8 iGPU)
+- **Host**: `skye` (AMD Ryzen 7 5700G + Radeon Vega 8 iGPU)
 - **GPU Control**: AMDGPU optimizations with `lact` daemon
 - **Filesystems**: BTRFS and ext4 with tmpfiles management and swap hibernation support
 - **Audio**: PipeWire audio stack managed via WirePlumber and `wiremix`
@@ -68,7 +68,7 @@ This repository uses a decentralized dendritic module structure. Modules are sel
 ├── flake.nix               # Flake entry point (auto-managed by flake-file)
 ├── flake.lock              # Locked dependencies
 ├── hosts/                  # Host definitions
-│   └── main/               # Main desktop workstation configuration
+│   └── skye/               # Main desktop workstation configuration
 ├── modules/                # Modular feature components
 │   ├── dev/                # Neovim (nvf), Zed, Nix, Jcode, Herdr
 │   ├── networking/         # daeuniverse (dae, honk), networkmanager, ssh, firewall, throne
@@ -85,7 +85,7 @@ This repository uses a decentralized dendritic module structure. Modules are sel
 ├── nix/                    # Internal flake helpers, lib functions, and tool wrappers
 │   ├── flake-parts/        # Factory and dendritic flake builders
 │   └── tools/              # Home-manager and sops-nix wrappers
-├── secrets/                # Encrypted SOPS secrets (secrets.yaml)
+├── secrets/                # Encrypted SOPS secrets (skye.yaml, tihdizer.yaml, mull.yaml)
 ├── templates/              # Module templates for easy expansion
 └── users/                  # User home-manager environments
     ├── tihdizer/           # Primary user profile (Niri rules, starship, walker, git)

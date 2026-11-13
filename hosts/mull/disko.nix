@@ -7,7 +7,7 @@
     };
   };
 
-  flake.modules.nixos.music-disko =
+  flake.modules.nixos.mull-disko =
     { lib, ... }:
     {
       imports = lib.optional (inputs ? disko) inputs.disko.nixosModules.disko;

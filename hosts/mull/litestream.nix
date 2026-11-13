@@ -1,6 +1,6 @@
 { ... }:
 {
-  flake.modules.nixos.music-litestream =
+  flake.modules.nixos.mull-litestream =
     {
       config,
       pkgs,

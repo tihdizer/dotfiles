@@ -1,6 +1,6 @@
 { ... }:
 {
-  flake.modules.nixos.music-reverse-proxy =
+  flake.modules.nixos.mull-reverse-proxy =
     { ... }:
     {
       networking.firewall.allowedTCPPorts = [

@@ -1,6 +1,6 @@
 { ... }:
 {
-  flake.modules.nixos.host-main-system =
+  flake.modules.nixos.mull-system =
     { ... }:
     {
       nix = {
@@ -10,8 +10,8 @@
             "root"
             "@wheel"
           ];
-          cores = 4;
-          max-jobs = 2;
+          cores = 2;
+          max-jobs = 1;
           substituters = [ "https://cache.nixos.org/" ];
           trusted-public-keys = [
             "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
@@ -38,7 +38,14 @@
         Defaults lecture = never
       '';
 
+      boot.loader.grub = {
+        enable = true;
+        efiSupport = false;
+      };
+
+      boot.loader.efi.canTouchEfiVariables = true;
+
       nixpkgs.config.allowUnfree = true;
-      system.stateVersion = "25.11";
+      system.stateVersion = "26.05";
     };
 }

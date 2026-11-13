@@ -1,6 +1,6 @@
 { ... }:
 {
-  flake.modules.nixos.host-main-users =
+  flake.modules.nixos.skye-users =
     {
       config,
       pkgs,
@@ -12,11 +12,11 @@
 
       sops.secrets = {
         "tihdizer" = {
-          sopsFile = ../../secrets/passwords.yaml;
+          sopsFile = ../../secrets/skye.yaml;
           neededForUsers = true;
         };
         "root" = {
-          sopsFile = ../../secrets/passwords.yaml;
+          sopsFile = ../../secrets/skye.yaml;
           neededForUsers = true;
         };
       };

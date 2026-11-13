@@ -1,14 +1,14 @@
 { inputs, ... }:
 {
-  flake.modules.nixos.main = {
+  flake.modules.nixos.skye = {
     imports = with inputs.self.modules.nixos; [
       #= Host
-      host-main-hardware
-      host-main-disko
-      host-main-preservation
-      host-main-system
-      host-main-locales
-      host-main-users
+      skye-hardware
+      skye-disko
+      skye-preservation
+      skye-system
+      skye-locales
+      skye-users
       system-default
       home-manager
 
@@ -45,7 +45,7 @@
       # prism-launcher
     ];
 
-    networking.hostName = "main";
+    networking.hostName = "skye";
 
     system.configurationRevision = inputs.self.rev or inputs.self.dirtyRev or null;
 

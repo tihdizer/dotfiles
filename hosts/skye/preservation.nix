@@ -6,7 +6,7 @@
     };
   };
 
-  flake.modules.nixos.host-main-preservation =
+  flake.modules.nixos.skye-preservation =
     {
       lib,
       options,

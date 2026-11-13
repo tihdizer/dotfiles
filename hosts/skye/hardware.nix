@@ -1,6 +1,6 @@
 { ... }:
 {
-  flake.modules.nixos.host-main-hardware =
+  flake.modules.nixos.skye-hardware =
     { config, lib, modulesPath, ... }:
     {
       imports = [

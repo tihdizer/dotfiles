@@ -1,6 +1,6 @@
 { ... }:
 {
-  flake.modules.nixos.music-beets =
+  flake.modules.nixos.mull-beets =
     { pkgs, ... }:
     let
       inboxFolder = "/var/media/inbox";

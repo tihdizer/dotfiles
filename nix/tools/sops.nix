@@ -13,7 +13,7 @@
       imports = [ inputs.sops-nix.nixosModules.sops ];
 
       sops = {
-        defaultSopsFile = ../../secrets/secrets.yaml;
+        defaultSopsFile = lib.mkDefault ../../secrets/tihdizer.yaml;
         validateSopsFiles = false;
 
         age.keyFile = lib.mkDefault "/persistent/var/lib/sops-nix/key.txt";

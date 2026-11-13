@@ -1,6 +1,6 @@
 { ... }:
 {
-  flake.modules.nixos.music-users =
+  flake.modules.nixos.mull-users =
     {
       pkgs,
       lib,

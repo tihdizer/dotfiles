@@ -5,7 +5,7 @@ let
   port = 3746;
 in
 {
-  flake.modules.nixos.music-aven-server =
+  flake.modules.nixos.mull-aven-server =
     { pkgs, ... }:
     let
       aven = getPackage pkgs;

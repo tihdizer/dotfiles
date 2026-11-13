@@ -7,7 +7,7 @@
     };
   };
 
-  flake.modules.nixos.host-main-disko =
+  flake.modules.nixos.skye-disko =
     { config, lib, ... }:
     {
       imports = lib.optional (inputs ? disko) inputs.disko.nixosModules.disko;

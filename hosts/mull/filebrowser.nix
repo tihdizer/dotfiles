@@ -1,6 +1,6 @@
 { ... }:
 {
-  flake.modules.nixos.music-filebrowser =
+  flake.modules.nixos.mull-filebrowser =
     { config, ... }:
     let
       mediaFolder = "/var/media";
@@ -8,7 +8,7 @@
     in
     {
       sops.secrets.password = {
-        sopsFile = ../../secrets/music-secrets.yaml;
+        sopsFile = ../../secrets/mull.yaml;
       };
 
       sops.templates."filebrowser.env" = {

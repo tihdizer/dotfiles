@@ -1,6 +1,6 @@
 { ... }:
 {
-  flake.modules.nixos.host-main-locales =
+  flake.modules.nixos.skye-locales =
     { ... }:
     {
       i18n = {

@@ -1,6 +1,6 @@
 { ... }:
 {
-  flake.modules.nixos.music-locales =
+  flake.modules.nixos.mull-locales =
     { ... }:
     {
       i18n = {

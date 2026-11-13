@@ -1,6 +1,6 @@
 { ... }:
 {
-  flake.modules.nixos.music-hardware =
+  flake.modules.nixos.mull-hardware =
     { lib, modulesPath, ... }:
     {
       imports = [

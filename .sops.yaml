@@ -1,15 +1,15 @@
 creation_rules:
-  - path_regex: secrets/secrets\.yaml$
+  - path_regex: secrets/skye\.yaml$
     key_groups:
       - age:
-          - &main "age1c6qdx9eypwx0mkuh9ucpt8a5hj0qm8fd6v8canauh83jl498kd0qpay48t"
-          - &music "age1r2ryrsvs6xxmyd5dq9955awvmf87p7pxgum0f077x9h0t6kmtsfs66x0uj"
-  - path_regex: secrets/music-secrets\.yaml$
+          - &skye "age1c6qdx9eypwx0mkuh9ucpt8a5hj0qm8fd6v8canauh83jl498kd0qpay48t"
+  - path_regex: secrets/tihdizer\.yaml$
     key_groups:
       - age:
-          - *main
-          - *music
-  - path_regex: secrets/passwords\.yaml$
+          - *skye
+          - &mull "age1r2ryrsvs6xxmyd5dq9955awvmf87p7pxgum0f077x9h0t6kmtsfs66x0uj"
+  - path_regex: secrets/mull\.yaml$
     key_groups:
       - age:
-          - *main
+          - *skye
+          - *mull

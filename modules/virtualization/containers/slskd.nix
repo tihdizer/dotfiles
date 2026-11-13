@@ -4,11 +4,11 @@
     { config, ... }:
     {
       sops.secrets.user = {
-        sopsFile = ../../../secrets/music-secrets.yaml;
+        sopsFile = ../../../secrets/mull.yaml;
       };
 
       sops.secrets.password = {
-        sopsFile = ../../../secrets/music-secrets.yaml;
+        sopsFile = ../../../secrets/mull.yaml;
       };
 
       sops.templates."slskd.env" = {
