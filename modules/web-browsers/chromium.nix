@@ -25,6 +25,7 @@ in
     {
       home.packages = with pkgs; [
         google-chrome
+        zenity
       ];
 
       programs.chromium = {
