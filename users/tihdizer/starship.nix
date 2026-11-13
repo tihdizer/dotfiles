@@ -93,6 +93,24 @@ let
   };
 in
 {
+  flake.modules.nixos.starship =
+    { ... }:
+    {
+      programs.starship = {
+        enable = true;
+        settings = settings;
+      };
+    };
+
+  flake.modules.nixos.tihdizer-starship =
+    { ... }:
+    {
+      programs.starship = {
+        enable = true;
+        settings = settings;
+      };
+    };
+
   flake.modules.homeManager.tihdizer-starship =
     {
       config,

@@ -21,6 +21,7 @@
         slskd
         ssh
         yazi
+        starship
       ];
 
       sops.age.keyFile = null;
