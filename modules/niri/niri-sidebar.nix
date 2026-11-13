@@ -24,7 +24,7 @@ let
     position = "left"
     peek = 0
     focus_peek = 128
-    sticky = false
+    sticky = true
 
     [[window_rule]]
     title = "(?i)^picture[- ]in[- ]picture$"
