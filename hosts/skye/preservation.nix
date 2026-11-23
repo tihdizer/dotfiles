@@ -83,6 +83,7 @@
                 ".local/bin"
                 ".cache/cliphist"
                 ".cache/art-wallpaper"
+                ".cache/tele"
                 ".local/share/keyrings"
                 ".local/share/direnv"
                 ".local/share/zsh"
