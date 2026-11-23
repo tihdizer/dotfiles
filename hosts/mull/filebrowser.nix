@@ -47,7 +47,7 @@
 
           volumes = [
             "${configDir}:/database:Z"
-            "${mediaFolder}:/srv:Z"
+            "${mediaFolder}:/srv:rbind,rslave"
           ];
 
           ports = [
@@ -57,7 +57,7 @@
           extraOptions = [
             "--name=filebrowser"
             "--hostname=filebrowser"
-            "--user=1000:1000"
+            "--user=1000:100"
             "--cpus=0.3"
             "--memory=256m"
             "--memory-swap=512m"
@@ -66,8 +66,14 @@
       };
 
       systemd.services.podman-filebrowser = {
-        after = [ "systemd-tmpfiles-setup.service" ];
-        requires = [ "systemd-tmpfiles-setup.service" ];
+        after = [
+          "systemd-tmpfiles-setup.service"
+          "rclone-r2-music.service"
+        ];
+        requires = [
+          "systemd-tmpfiles-setup.service"
+          "rclone-r2-music.service"
+        ];
       };
     };
 }
