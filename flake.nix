@@ -84,6 +84,7 @@
       flake = false;
     };
     preservation.url = "github:nix-community/preservation";
+    psysonic.url = "github:Psysonic/psysonic";
     sops-nix = {
       url = "github:Mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs";

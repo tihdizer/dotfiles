@@ -719,6 +719,22 @@
         "type": "github"
       }
     },
+    "nixpkgs_3": {
+      "locked": {
+        "lastModified": 1792773339,
+        "narHash": "sha256-rZLrzrC6i+jnTAlvPZHogKDulY7WWDEv9hJeHieO7Zw=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "3ec636362e1816bc2f0888fa0fa2c69f1bc9e504",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "nixos-unstable",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
     "nur": {
       "inputs": {
         "flake-parts": [
@@ -817,6 +833,24 @@
         "type": "github"
       }
     },
+    "psysonic": {
+      "inputs": {
+        "nixpkgs": "nixpkgs_3"
+      },
+      "locked": {
+        "lastModified": 1795165623,
+        "narHash": "sha256-N0DXk7uiyklQf1KvhXMshE7VyA6/H3xCiB1Dy2CczAQ=",
+        "owner": "Psysonic",
+        "repo": "psysonic",
+        "rev": "1ab4306fbf545edbc8cd212be67994224d920d9a",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Psysonic",
+        "repo": "psysonic",
+        "type": "github"
+      }
+    },
     "root": {
       "inputs": {
         "aven": "aven",
@@ -837,6 +871,7 @@
         "nvf": "nvf",
         "oh-my-cpa-src": "oh-my-cpa-src",
         "preservation": "preservation",
+        "psysonic": "psysonic",
         "sops-nix": "sops-nix",
         "stylix": "stylix",
         "torlink": "torlink",

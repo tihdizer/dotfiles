@@ -121,6 +121,10 @@
                 ".zen"
                 ".floorp"
                 ".thunderbird"
+
+                # Media & Music
+                ".local/share/dev.psysonic.player"
+                ".config/dev.psysonic.player"
               ];
 
               files = [

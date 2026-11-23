@@ -38,13 +38,13 @@
         ssh
         wallpaper
         lab-ubuntu
-        n8n
         torlink
         fuzzel
         anki
         aven
         telegram
         mako
+        psysonic
       ])
       ++ [
         inputs.niri.homeModules.niri
