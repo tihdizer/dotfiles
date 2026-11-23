@@ -1,7 +1,7 @@
 { ... }:
 {
   flake.modules.nixos.mull-beets =
-    { pkgs, ... }:
+    { config, pkgs, ... }:
     let
       inboxFolder = "/var/media/inbox";
       musicFolder = "/var/media/music";
@@ -100,10 +100,27 @@
 
           echo "Transfers fully completed. Running beets import..."
           beet -c "${beetsConfigFile}" import "${inboxFolder}"
+
+          echo "Triggering Navidrome scan..."
+          ${pkgs.runtimeShell} ${config.sops.templates."beets-navidrome-scan.sh".path} || true
         done
       '';
     in
     {
+      sops.secrets.password = {
+        sopsFile = ../../secrets/mull.yaml;
+      };
+
+      sops.templates."beets-navidrome-scan.sh" = {
+        content = ''
+          #!${pkgs.runtimeShell}
+          ${pkgs.curl}/bin/curl -s "http://127.0.0.1:4533/rest/startScan.view?u=tihdizer&p=${config.sops.placeholder.password}&v=1.16.1&c=beets&f=json"
+        '';
+        mode = "0750";
+        owner = "tihdizer";
+        group = "users";
+      };
+
       environment.systemPackages = [
         pkgs.beets
         pkgs.inotify-tools
