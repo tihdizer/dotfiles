@@ -24,7 +24,6 @@
       #= Networking
       networkmanager
       firewall
-      dae
       throne
       ssh
       mpv
