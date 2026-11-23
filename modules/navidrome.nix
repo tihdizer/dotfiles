@@ -6,6 +6,7 @@
       users.users.navidrome = {
         isSystemUser = true;
         group = "navidrome";
+        extraGroups = [ "users" ];
       };
 
       users.groups.navidrome = { };
@@ -25,9 +26,12 @@
           DefaultTheme = "Dark";
           EnableSharing = true;
           EnableInsightsCollector = false;
-          ScanSchedule = "@every 10m";
-          
-          LyricsPriority = "embedded,lyrics-plugin";
+
+          Scanner = {
+            Schedule = "@every 10m";
+          };
+
+          LyricsPriority = "embedded,nd-lyrics";
         };
       };
     };
