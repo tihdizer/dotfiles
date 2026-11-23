@@ -1,6 +1,6 @@
 { ... }:
 {
-  flake.modules.nixos.programs-desktop-niri-dbus =
+  flake.modules.nixos.niri-dbus =
     { pkgs, lib, ... }:
     let
       inherit (lib) mkForce;

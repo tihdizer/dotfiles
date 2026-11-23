@@ -14,6 +14,7 @@
         tihdizer-niri-settings
         tihdizer-niri-startup
         tihdizer-niri-windowrules
+        nirimap
       ];
 
       #= Setup Niri

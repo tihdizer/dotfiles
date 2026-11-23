@@ -1,6 +1,6 @@
 { ... }:
 {
-  flake.modules.nixos.programs-desktop-niri-session-manager =
+  flake.modules.nixos.niri-session-manager =
     { pkgs, lib, ... }:
     let
       niri-session = "${pkgs.niri}/bin/niri-session";

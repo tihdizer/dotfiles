@@ -35,7 +35,7 @@
       docker
 
       #= TODO: Desktop
-      programs-desktop-niri
+      niri
       sunshine
       chromium
 

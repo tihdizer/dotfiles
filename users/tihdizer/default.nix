@@ -33,8 +33,6 @@
         television
         omniroute
         jcode
-        nirimap
-        niri-sidebar
         usb
         bluetooth
         ssh

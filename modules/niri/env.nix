@@ -1,6 +1,6 @@
 { ... }:
 {
-  flake.modules.nixos.programs-desktop-niri-env =
+  flake.modules.nixos.niri-env =
     { ... }:
     {
       environment.pathsToLink = [
