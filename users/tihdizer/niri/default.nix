@@ -15,6 +15,7 @@
         tihdizer-niri-startup
         tihdizer-niri-windowrules
         nirimap
+        workspace-osd
       ];
 
       #= Setup Niri

@@ -36,7 +36,7 @@ let
     max_height_percent = 0.5                                     # Maximum height as fraction of screen ("all" mode)
     anchor = "bottom-right"                                      # Position: top-left, top-center, top-right, bottom-left, etc.
     margin_x = 10                                                # Horizontal margin from edge
-    margin_y = 10                                                # Vertical margin from edge
+    margin_y = 42                                                # Vertical margin from edge
     workspace_mode = "current"                                   # "all" - stack every workspace, "current" - show active only
 
     [appearance]

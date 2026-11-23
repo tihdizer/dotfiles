@@ -9,6 +9,8 @@
     }:
     let
       inherit (lib) getExe mkMerge;
+      browser = getExe pkgs.google-chrome;
+      telegram = getExe pkgs.telegram-desktop;
       wpctl = "${pkgs.wireplumber}/bin/wpctl";
       playerctl = "${pkgs.playerctl}/bin/playerctl";
       launcher = getExe pkgs.fuzzel;
@@ -17,87 +19,8 @@
       logout = getExe pkgs.wlogout;
       niri = getExe config.programs.niri.package;
       jq = getExe pkgs.jq;
-      tmux = getExe pkgs.tmux;
+      zellij = getExe pkgs.zellij;
       notifySend = getExe pkgs.libnotify;
-      toggleFloatingApp =
-        {
-          name,
-          appId,
-          execCmd,
-        }:
-        getExe (
-          pkgs.writeShellScriptBin name ''
-            FOCUSED_ID="$(${niri} msg -j windows 2>/dev/null | ${jq} -r '.[] | select((.app_id != null and (.app_id | test("${appId}"))) and .is_focused == true) | .id' | head -n 1)"
-            if [ -n "$FOCUSED_ID" ]; then
-              ${niri} msg action close-window --id "$FOCUSED_ID"
-            else
-              WIN_ID="$(${niri} msg -j windows 2>/dev/null | ${jq} -r '[.[] | select(.app_id != null and (.app_id | test("${appId}")))] | sort_by([.focus_timestamp.secs // 0, .focus_timestamp.nanos // 0]) | reverse | .[0].id // empty')"
-              if [ -n "$WIN_ID" ]; then
-                ${niri} msg action focus-window --id "$WIN_ID"
-              else
-                exec ${execCmd}
-              fi
-            fi
-          ''
-        );
-
-      focusOrOpenApp =
-        {
-          name,
-          appId,
-          execCmd,
-        }:
-        getExe (
-          pkgs.writeShellScriptBin name ''
-            FOCUSED_ID="$(${niri} msg -j windows 2>/dev/null | ${jq} -r '.[] | select((.app_id != null and (.app_id | test("${appId}"))) and .is_focused == true) | .id' | head -n 1)"
-            if [ -n "$FOCUSED_ID" ]; then
-              exec ${execCmd}
-            else
-              WIN_ID="$(${niri} msg -j windows 2>/dev/null | ${jq} -r '[.[] | select(.app_id != null and (.app_id | test("${appId}")))] | sort_by([.focus_timestamp.secs // 0, .focus_timestamp.nanos // 0]) | reverse | .[0].id // empty')"
-              if [ -n "$WIN_ID" ]; then
-                ${niri} msg action focus-window --id "$WIN_ID"
-              else
-                exec ${execCmd}
-              fi
-            fi
-          ''
-        );
-
-      browser = focusOrOpenApp {
-        name = "browser";
-        appId = "google-chrome";
-        execCmd = "${getExe pkgs.google-chrome}";
-      };
-      herdr = toggleFloatingApp {
-        name = "herdr";
-        appId = "herdr";
-        execCmd = "${term} --class herdr -e env HERDR=1 ${getExe pkgs.herdr}";
-      };
-      term-floating = toggleFloatingApp {
-        name = "term-floating";
-        appId = "term-floating";
-        execCmd = "${term} --class term-floating -e ${tmux} new-session -A -s float";
-      };
-      explorer = toggleFloatingApp {
-        name = "yazi-floating";
-        appId = "yazi-floating";
-        execCmd = "${term} --class yazi-floating -e ${getExe config.programs.yazi.package}";
-      };
-      volume = toggleFloatingApp {
-        name = "volume";
-        appId = "volume";
-        execCmd = "${term} --class volume -e ${getExe pkgs.wiremix}";
-      };
-      telegram = toggleFloatingApp {
-        name = "telegram";
-        appId = "chrome-web.telegram.org";
-        execCmd = "${getExe pkgs.chromium} --app=https://web.telegram.org";
-      };
-      btm = toggleFloatingApp {
-        name = "btm";
-        appId = "btm";
-        execCmd = "${term} --class btm -e ${getExe pkgs.bottom}";
-      };
       castWindow = getExe (
         pkgs.writeShellScriptBin "niri-cast-window" ''
           ${niri} msg action set-dynamic-cast-window
@@ -124,6 +47,36 @@
         pkgs.writeShellScriptBin "niri-cast-clear" ''
           ${niri} msg action clear-dynamic-cast-target
           ${notifySend} -h string:synchronous:dynamic-cast -a "niri" -i video-display "Dynamic Cast" "Target cleared"
+        ''
+      );
+      popStash = getExe (
+        pkgs.writeShellScriptBin "niri-pop-stash" ''
+          STASH_WS_ID="$(${niri} msg -j workspaces 2>/dev/null | ${jq} -r 'first(.[] | select(.name == "stash") | .id) // empty')"
+          if [ -z "$STASH_WS_ID" ]; then
+            exit 0
+          fi
+
+          CURRENT_WS_ID="$(${niri} msg -j workspaces 2>/dev/null | ${jq} -r 'first(.[] | select(.is_focused == true) | .id) // empty')"
+          if [ -z "$CURRENT_WS_ID" ] || [ "$CURRENT_WS_ID" = "$STASH_WS_ID" ]; then
+            exit 0
+          fi
+
+          CURRENT_WS_REF="$(${niri} msg -j workspaces 2>/dev/null | ${jq} -r 'first(.[] | select(.is_focused == true) | (.name // (.idx | tostring))) // empty')"
+          if [ -z "$CURRENT_WS_REF" ]; then
+            exit 0
+          fi
+
+          WIN_ID="$(${niri} msg -j windows 2>/dev/null | ${jq} -r --argjson stash_ws "$STASH_WS_ID" '[.[] | select(.workspace_id == $stash_ws)] | sort_by([.focus_timestamp.secs // 0, .focus_timestamp.nanos // 0, .id]) | last | .id // empty')"
+          if [ -n "$WIN_ID" ]; then
+            ${niri} msg action move-window-to-workspace --window-id "$WIN_ID" "$CURRENT_WS_REF"
+            ${niri} msg action focus-window --id "$WIN_ID"
+          fi
+        ''
+      );
+      workspaceTerm = getExe (
+        pkgs.writeShellScriptBin "niri-workspace-term" ''
+          WS_NAME="$(${niri} msg -j workspaces 2>/dev/null | ${jq} -r 'first(.[] | select(.is_focused == true) | (.name // (.idx | tostring))) // "main"')"
+          exec ${term} -e ${zellij} attach -c "$WS_NAME"
         ''
       );
     in
@@ -200,16 +153,52 @@
             };
 
             #= Launch/Spawn Software
-            "Mod+T".action.spawn = [ term ];
-            "Mod+Shift+T".action.spawn = [ term-floating ];
-            "Mod+Ctrl+T".action.spawn = [ herdr ];
-            "Mod+E".action.spawn = [ explorer ];
+            "Mod+T".action.spawn = [ workspaceTerm ];
+            "Mod+Shift+T".action.spawn = [
+              term
+              "--class"
+              "term-floating"
+              "-e"
+              zellij
+              "attach"
+              "-c"
+              "float"
+            ];
+            "Mod+E".action.spawn = [
+              term
+              "--class"
+              "yazi"
+              "-e"
+              (getExe config.programs.yazi.package)
+            ];
+            "Mod+Shift+E".action.spawn = [
+              term
+              "--class"
+              "yazi-floating"
+              "-e"
+              (getExe config.programs.yazi.package)
+            ];
             "Mod+B".action.spawn = [ browser ];
             "Mod+A".action.spawn = [ telegram ];
             "Mod+D".action.spawn = [ launcher ];
-            "Mod+Y".action.spawn = [ copyq "toggle" ];
-            "Mod+P".action.spawn = [ volume ];
-            "Mod+Escape".action.spawn = [ btm ];
+            "Mod+Y".action.spawn = [
+              copyq
+              "toggle"
+            ];
+            "Mod+P".action.spawn = [
+              term
+              "--class"
+              "volume"
+              "-e"
+              (getExe pkgs.wiremix)
+            ];
+            "Mod+Escape".action.spawn = [
+              term
+              "--class"
+              "btm"
+              "-e"
+              (getExe pkgs.bottom)
+            ];
             "Mod+Shift+Escape".action.spawn = [ logout ];
 
             #= Screenshots
@@ -245,9 +234,6 @@
             "Mod+Period".action = consume-or-expel-window-right;
             "Mod+C".action = center-column;
             "Mod+Ctrl+C".action = center-visible-columns;
-
-            #= Screen Mirror (Test) # wl-present mirror eDP-1 --fullscreen-output HDMI-A-1 --fullscreen
-            #"Mod+Shift+M".action.spawn = ["wl-present" "mirror" "eDP-1" "--fullscreen-output" "HDMI-A-1" "--fullscreen"];
 
             #= Focus Windows
             "Mod+H".action = focus-column-left;
@@ -304,7 +290,11 @@
             "Mod+Ctrl+8".action.move-window-to-workspace = 8;
             "Mod+Ctrl+9".action.move-window-to-workspace = 9;
             "Mod+Ctrl+0".action.move-window-to-workspace = "ops";
-            "Mod+Ctrl+S".action.move-window-to-workspace = "stash";
+            "Mod+Ctrl+S".action.move-window-to-workspace = [
+              { focus = false; }
+              "stash"
+            ];
+            "Mod+Shift+S".action.spawn = [ popStash ];
 
             "Mod+Tab".action = focus-workspace-previous;
           }

@@ -5,7 +5,6 @@
     let
       scheme = config.lib.stylix.colors;
     in
-
     {
       programs.niri.settings = {
         window-rules = [
@@ -47,7 +46,7 @@
 
           center-focused-column = "never";
 
-          background-color = scheme.base01;
+          background-color = "transparent";
 
           preset-window-heights = [
             { proportion = 1. / 3.; }
