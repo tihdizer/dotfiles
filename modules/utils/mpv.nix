@@ -6,6 +6,10 @@
       networking.firewall.allowedTCPPorts = [
         23456
         61777
+        61778
+        61779
+        61780
+        61781
       ];
     };
 
@@ -88,7 +92,10 @@
         </script>
         EOF
                 substitute ${mpv-subtitleminer-web-src}/mpv/index.html $out/index.html \
-                  --replace-fail 'connection:{host:"127.0.0.1"' 'connection:{host:window.location.hostname||"127.0.0.1"'
+                  --replace-fail 'connection:{host:"127.0.0.1"' 'connection:{host:window.location.hostname||"127.0.0.1"' \
+                  --replace-fail 'connection:{...l.connection,...r.connection}' 'connection:{...l.connection,...r.connection,host:(r.connection&&r.connection.host&&r.connection.host!=="127.0.0.1"?r.connection.host:(window.location.hostname||"127.0.0.1"))}' \
+                  --replace-fail 'ne=new WebSocket(`ws://''${$}:''${P}`)' 'ne=new WebSocket(window.location.host?((window.location.protocol==="https:"?"wss:":"ws:")+"//"+window.location.host+"/ws/"+P):`ws://''${$}:''${P}`)' \
+                  --replace-fail 'retryDelay:1e3' 'retryDelay:3e3'
                 sed -i -e '/<\/body>/e cat '"$out/controls.html" $out/index.html
                 rm -f $out/controls.html
       '';
@@ -159,6 +166,30 @@
         :23456 {
           handle /api/* {
             reverse_proxy 127.0.0.1:23457
+          }
+          handle /ws/61777* {
+            uri strip_prefix /ws/61777
+            reverse_proxy 127.0.0.1:61777
+          }
+          handle /ws/61780* {
+            uri strip_prefix /ws/61780
+            reverse_proxy 127.0.0.1:61780
+          }
+          handle /ws/61778* {
+            uri strip_prefix /ws/61778
+            reverse_proxy 127.0.0.1:61778
+          }
+          handle /ws/61779* {
+            uri strip_prefix /ws/61779
+            reverse_proxy 127.0.0.1:61779
+          }
+          handle /ws/61781* {
+            uri strip_prefix /ws/61781
+            reverse_proxy 127.0.0.1:61781
+          }
+          handle /ws* {
+            uri strip_prefix /ws
+            reverse_proxy 127.0.0.1:61777
           }
           handle {
             root * ${mpv-subtitleminer-web}
