@@ -18,8 +18,12 @@ in
     { pkgs, lib, ... }:
     {
       nix.settings = {
-        substituters = [ "https://psysonic.cachix.org" ];
+        substituters = [
+          "https://cache.nixos.org/"
+          "https://psysonic.cachix.org"
+        ];
         trusted-public-keys = [
+          "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
           "psysonic.cachix.org-1:M9cQyQ7tgvUWOQ5Pyt8ozlMoPLtOZir6MfRuTH9/VYA="
         ];
       };
@@ -31,8 +35,12 @@ in
     { pkgs, lib, ... }:
     {
       nix.settings = {
-        substituters = [ "https://psysonic.cachix.org" ];
+        substituters = [
+          "https://cache.nixos.org/"
+          "https://psysonic.cachix.org"
+        ];
         trusted-public-keys = [
+          "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
           "psysonic.cachix.org-1:M9cQyQ7tgvUWOQ5Pyt8ozlMoPLtOZir6MfRuTH9/VYA="
         ];
       };
