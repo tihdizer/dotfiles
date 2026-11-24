@@ -302,6 +302,14 @@
             auto_start = "yes";
             ports = "61777,61778,61779,61780,61781";
           };
+          autoload = {
+            disabled = false;
+            images = false;
+            videos = true;
+            audio = true;
+            additional_video_exts = "mkv,mp4,webm,avi,mov,flv,ogv";
+            additional_audio_exts = "mp3,flac,ogg,wav,aac,m4a,opus";
+          };
         };
 
         bindings = {
