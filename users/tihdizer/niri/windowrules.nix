@@ -40,7 +40,7 @@
           };
           "07-media" = {
             name = "media";
-            open-on-output = primary-monitor;
+            open-on-output = tv;
           };
         };
         layer-rules = [
