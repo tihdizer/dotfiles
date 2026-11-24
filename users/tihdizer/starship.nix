@@ -135,6 +135,7 @@ in
         enableZshIntegration = config.programs.zsh.enable;
         enableFishIntegration = config.programs.fish.enable;
         enableNushellIntegration = config.programs.fish.enable;
+        enableBashIntegration = true;
         settings = settings;
       };
     };
