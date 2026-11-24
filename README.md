@@ -37,9 +37,10 @@ This repository uses a decentralized dendritic module structure. Modules are sel
 - **Wallpapers**: Automated `daily-art-wallpaper` service fetching daily high-resolution artwork from The Metropolitan Museum of Art API via `awww`.
 
 ### Shell & Terminal
+- **Multiplexer**: Zellij
 - **Shells**: Zsh (default interactive shell), Fish, Bash
 - **Terminal Emulator**: Kitty (cuz of yazi)
-- **Prompt**: Starship with custom status segments for normal shells and tmux
+- **Prompt**: Starship with custom status segments for normal shells and zellij
 - **CLI Utilities**: `zoxide`, `eza`, `lsd`, `bat`, `ripgrep`, `fd`, `duf`, `dust`, `gping`, `httpie`, `tldr`, `television`, `yazi`, `bottom`
 
 ### Development Environment

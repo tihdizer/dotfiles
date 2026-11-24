@@ -10,7 +10,7 @@
       kitty
       fastfetch
       macchina
-      tmux
+      zellij
       atuin
     ];
   };
@@ -25,7 +25,7 @@
       kitty
       fastfetch
       macchina
-      tmux
+      zellij
       atuin
     ];
   };

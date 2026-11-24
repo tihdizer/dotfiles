@@ -164,16 +164,15 @@ let
         profile = "telescope";
       };
 
-      extraPlugins.vim-tmux-navigator = {
-        package = pkgs.vimPlugins.vim-tmux-navigator;
+      extraPlugins.zellij-nav-nvim = {
+        package = pkgs.vimPlugins.zellij-nav-nvim;
         setup = ''
-          vim.g.tmux_navigator_no_mappings = 1
+          require("zellij-nav").setup({})
 
-          vim.keymap.set("n", "<C-h>", "<cmd>TmuxNavigateLeft<cr>", { silent = true, desc = "Navigate left" })
-          vim.keymap.set("n", "<C-j>", "<cmd>TmuxNavigateDown<cr>", { silent = true, desc = "Navigate down" })
-          vim.keymap.set("n", "<C-k>", "<cmd>TmuxNavigateUp<cr>", { silent = true, desc = "Navigate up" })
-          vim.keymap.set("n", "<C-l>", "<cmd>TmuxNavigateRight<cr>", { silent = true, desc = "Navigate right" })
-          vim.keymap.set("n", "<C-\\>", "<cmd>TmuxNavigatePrevious<cr>", { silent = true, desc = "Navigate previous" })
+          vim.keymap.set("n", "<C-h>", "<cmd>ZellijNavigateLeft<cr>", { silent = true, desc = "Navigate left" })
+          vim.keymap.set("n", "<C-j>", "<cmd>ZellijNavigateDown<cr>", { silent = true, desc = "Navigate down" })
+          vim.keymap.set("n", "<C-k>", "<cmd>ZellijNavigateUp<cr>", { silent = true, desc = "Navigate up" })
+          vim.keymap.set("n", "<C-l>", "<cmd>ZellijNavigateRight<cr>", { silent = true, desc = "Navigate right" })
         '';
       };
 
