@@ -18,16 +18,16 @@
             name = "personal";
             open-on-output = primary-monitor;
           };
-          "02-study" = {
+          "02-comms" = {
+            name = "comms";
+            open-on-output = primary-monitor;
+          };
+          "03-study" = {
             name = "study";
             open-on-output = primary-monitor;
           };
-          "03-work" = {
+          "04-work" = {
             name = "work";
-            open-on-output = primary-monitor;
-          };
-          "04-comms" = {
-            name = "comms";
             open-on-output = primary-monitor;
           };
           "05-games" = {

@@ -270,9 +270,9 @@
             "Mod+Shift+Ctrl+J".action = move-column-to-monitor-down;
 
             "Mod+1".action.focus-workspace = "personal";
-            "Mod+2".action.focus-workspace = "study";
-            "Mod+3".action.focus-workspace = "work";
-            "Mod+4".action.focus-workspace = "comms";
+            "Mod+2".action.focus-workspace = "comms";
+            "Mod+3".action.focus-workspace = "study";
+            "Mod+4".action.focus-workspace = "work";
             "Mod+5".action.focus-workspace = "games";
             "Mod+6".action.focus-workspace = "ops";
             "Mod+7".action.focus-workspace = "media";
@@ -280,9 +280,9 @@
             "Mod+9".action.focus-workspace = 9;
             "Mod+S".action.focus-workspace = "stash";
             "Mod+Ctrl+1".action.move-window-to-workspace = "personal";
-            "Mod+Ctrl+2".action.move-window-to-workspace = "study";
-            "Mod+Ctrl+3".action.move-window-to-workspace = "work";
-            "Mod+Ctrl+4".action.move-window-to-workspace = "comms";
+            "Mod+Ctrl+2".action.move-window-to-workspace = "comms";
+            "Mod+Ctrl+3".action.move-window-to-workspace = "study";
+            "Mod+Ctrl+4".action.move-window-to-workspace = "work";
             "Mod+Ctrl+5".action.move-window-to-workspace = "games";
             "Mod+Ctrl+6".action.move-window-to-workspace = "media";
             "Mod+Ctrl+7".action.move-window-to-workspace = 7;
