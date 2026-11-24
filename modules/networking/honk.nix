@@ -142,6 +142,7 @@ let
         suffix: berserk-games.com,
         suffix: britishcouncil.org,
         suffix: captcha-delivery.com,
+        suffix: cachix.org,
         suffix: cdn-perfprod.com,
         suffix: coursera.org,
         suffix: cyberia.is,
