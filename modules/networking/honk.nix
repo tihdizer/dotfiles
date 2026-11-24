@@ -174,6 +174,7 @@ let
         suffix: music-assistant.io,
         suffix: musicbrainz.org,
         suffix: nixos.org,
+        suffix: determinate.systems,
         suffix: numtide.com,
         suffix: online-latin-dictionary.com,
         suffix: open.demonii.com,
@@ -464,6 +465,16 @@ in
 
           exec xray run -c "${xrayConfig}"
         '';
+      };
+
+      systemd.timers.xray = {
+        description = "Periodic restart timer to refresh Xray";
+        wantedBy = [ "timers.target" ];
+        timerConfig = {
+          OnCalendar = "daily";
+          RandomizedDelaySec = "30m";
+          Persistent = true;
+        };
       };
     };
 }
