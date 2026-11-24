@@ -36,7 +36,7 @@
 
       osdScript = pkgs.writeText "workspace-osd.tsx" ''
         import { App, Astal, Gtk } from "astal/gtk3"
-        import { Variable, subprocess, GLib } from "astal"
+        import { Variable, subprocess, exec, GLib } from "astal"
 
         const icons: Record<string, string> = {
             "personal": "󰄛",
@@ -56,16 +56,36 @@
         const currentTime = Variable("")
         const isVisible = Variable(false)
 
-        let hideTimer: any = null
+        function updateDateTime() {
+            const now = GLib.DateTime.new_now_local()
+            const dateStr = now.format("%a %-d") || ""
+            const timeStr = now.format("%H:%M") || ""
+            if (currentDate.get() !== dateStr) currentDate.set(dateStr)
+            if (currentTime.get() !== timeStr) currentTime.set(timeStr)
+        }
 
-        function showPopup(name: string, idx: string) {
+        updateDateTime()
+        GLib.timeout_add_seconds(GLib.PRIORITY_DEFAULT, 1, () => {
+            if (isVisible.get()) {
+                updateDateTime()
+            }
+            return GLib.SOURCE_CONTINUE
+        })
+
+        let hideTimer: any = null
+        let inOverview = false
+        let lastFocusedWindowId: number | null = null
+        let currentFocusedWs: { id: number, name: string, idx: number } | null = null
+
+        const workspaceMap = new Map<number, { id: number, name: string, idx: number, is_focused: boolean }>()
+        const knownWindowIds = new Set<number>()
+
+        function showPopup(name: string, idx: string, keepOpen = false) {
             workspaceName.set(name)
             workspaceIdx.set(idx)
             workspaceIcon.set(icons[name.toLowerCase()] || "󰄛")
 
-            const now = GLib.DateTime.new_now_local()
-            currentDate.set(now.format("%a %-d") || "")
-            currentTime.set(now.format("%H:%M") || "")
+            updateDateTime()
 
             isVisible.set(true)
 
@@ -74,17 +94,43 @@
                 hideTimer = null
             }
 
-            hideTimer = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 1060, () => {
-                isVisible.set(false)
-                hideTimer = null
-                return GLib.SOURCE_REMOVE
-            })
+            if (!keepOpen && !inOverview) {
+                hideTimer = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 1000, () => {
+                    isVisible.set(false)
+                    hideTimer = null
+                    return GLib.SOURCE_REMOVE
+                })
+            }
         }
 
-        const workspaceMap = new Map<number, { name: string, idx: number }>()
-        const windowMap = new Map<number, number>()
-        let activeWs: { name: string, idx: number } | null = null
-        let initialized = false
+        // Initialize state directly from niri at startup
+        try {
+            const initialWs = JSON.parse(exec(["${pkgs.niri}/bin/niri", "msg", "-j", "workspaces"]))
+            for (const ws of initialWs) {
+                const item = {
+                    id: ws.id,
+                    name: ws.name || `Workspace ''${ws.idx}`,
+                    idx: ws.idx,
+                    is_focused: ws.is_focused,
+                }
+                workspaceMap.set(ws.id, item)
+                if (ws.is_focused) {
+                    currentFocusedWs = item
+                    workspaceName.set(item.name)
+                    workspaceIdx.set(`#''${item.idx}`)
+                    workspaceIcon.set(icons[item.name.toLowerCase()] || "󰄛")
+                }
+            }
+            const initialWins = JSON.parse(exec(["${pkgs.niri}/bin/niri", "msg", "-j", "windows"]))
+            for (const win of initialWins) {
+                knownWindowIds.add(win.id)
+                if (win.is_focused) {
+                    lastFocusedWindowId = win.id
+                }
+            }
+        } catch (e) {
+            // fallback if initial query fails
+        }
 
         subprocess(["${pkgs.niri}/bin/niri", "msg", "-j", "event-stream"], (line) => {
             try {
@@ -92,52 +138,60 @@
 
                 if (event.WorkspacesChanged) {
                     for (const ws of event.WorkspacesChanged.workspaces) {
-                        workspaceMap.set(ws.id, {
+                        const item = {
+                            id: ws.id,
                             name: ws.name || `Workspace ''${ws.idx}`,
-                            idx: ws.idx
-                        })
-                    }
-                    const focused = event.WorkspacesChanged.workspaces.find((w: any) => w.is_focused)
-                    if (focused) {
-                        const ws = {
-                            name: focused.name ? focused.name : `Workspace ''${focused.idx}`,
-                            idx: focused.idx
+                            idx: ws.idx,
+                            is_focused: ws.is_focused,
                         }
-                        activeWs = ws
-                        if (initialized) {
-                            showPopup(ws.name, `#''${ws.idx}`)
-                        } else {
-                            initialized = true
+                        workspaceMap.set(ws.id, item)
+                        if (ws.is_focused) {
+                            if (!currentFocusedWs || currentFocusedWs.id !== ws.id) {
+                                currentFocusedWs = item
+                                showPopup(item.name, `#''${item.idx}`)
+                            } else {
+                                currentFocusedWs = item
+                            }
                         }
                     }
                 } else if (event.WorkspaceActivated) {
                     if (event.WorkspaceActivated.focused) {
                         const ws = workspaceMap.get(event.WorkspaceActivated.id)
                         if (ws) {
-                            activeWs = ws
-                            if (initialized) {
-                                showPopup(ws.name, `#''${ws.idx}`)
-                            }
+                            currentFocusedWs = ws
+                            showPopup(ws.name, `#''${ws.idx}`)
                         }
                     }
                 } else if (event.WindowsChanged) {
                     for (const win of event.WindowsChanged.windows) {
-                        windowMap.set(win.id, win.workspace_id)
+                        knownWindowIds.add(win.id)
                     }
                 } else if (event.WindowOpenedOrChanged) {
                     const win = event.WindowOpenedOrChanged.window
-                    windowMap.set(win.id, win.workspace_id)
+                    const isNew = !knownWindowIds.has(win.id)
+                    knownWindowIds.add(win.id)
+
+                    // Only show if a brand new window was opened on the active workspace
+                    if (isNew && currentFocusedWs && win.workspace_id === currentFocusedWs.id) {
+                        showPopup(currentFocusedWs.name, `#''${currentFocusedWs.idx}`)
+                    }
                 } else if (event.WindowClosed) {
-                    windowMap.delete(event.WindowClosed.id)
+                    knownWindowIds.delete(event.WindowClosed.id)
+                    if (lastFocusedWindowId === event.WindowClosed.id) {
+                        lastFocusedWindowId = null
+                    }
                 } else if (event.WindowFocusChanged) {
                     const winId = event.WindowFocusChanged.id
-                    if (winId != null && initialized) {
-                        const wsId = windowMap.get(winId)
-                        const ws = wsId != null ? workspaceMap.get(wsId) : activeWs
-                        if (ws) {
-                            activeWs = ws
-                            showPopup(ws.name, `#''${ws.idx}`)
+                    if (winId != null && winId !== lastFocusedWindowId) {
+                        lastFocusedWindowId = winId
+                        if (currentFocusedWs) {
+                            showPopup(currentFocusedWs.name, `#''${currentFocusedWs.idx}`)
                         }
+                    }
+                } else if (event.OverviewOpenedOrClosed) {
+                    inOverview = event.OverviewOpenedOrClosed.is_open
+                    if (currentFocusedWs) {
+                        showPopup(currentFocusedWs.name, `#''${currentFocusedWs.idx}`, inOverview)
                     }
                 }
             } catch (e) {
