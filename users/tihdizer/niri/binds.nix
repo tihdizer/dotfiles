@@ -274,11 +274,10 @@
             "Mod+3".action.focus-workspace = "work";
             "Mod+4".action.focus-workspace = "comms";
             "Mod+5".action.focus-workspace = "games";
-            "Mod+6".action.focus-workspace = "media";
-            "Mod+7".action.focus-workspace = 7;
+            "Mod+6".action.focus-workspace = "ops";
+            "Mod+7".action.focus-workspace = "media";
             "Mod+8".action.focus-workspace = 8;
             "Mod+9".action.focus-workspace = 9;
-            "Mod+0".action.focus-workspace = "ops";
             "Mod+S".action.focus-workspace = "stash";
             "Mod+Ctrl+1".action.move-window-to-workspace = "personal";
             "Mod+Ctrl+2".action.move-window-to-workspace = "study";

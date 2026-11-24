@@ -74,7 +74,7 @@
                 hideTimer = null
             }
 
-            hideTimer = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 1100, () => {
+            hideTimer = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 1060, () => {
                 isVisible.set(false)
                 hideTimer = null
                 return GLib.SOURCE_REMOVE

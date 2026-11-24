@@ -9,22 +9,40 @@
     in
     {
       programs.niri.settings = {
-        workspaces =
-          builtins.mapAttrs
-            (name: output: {
-              inherit name;
-              open-on-output = output;
-            })
-            {
-              personal = primary-monitor;
-              study = primary-monitor;
-              work = primary-monitor;
-              comms = primary-monitor;
-              ops = primary-monitor;
-              games = primary-monitor;
-              stash = primary-monitor;
-              media = tv;
-            };
+        workspaces = {
+          "00-stash" = {
+            name = "stash";
+            open-on-output = primary-monitor;
+          };
+          "01-personal" = {
+            name = "personal";
+            open-on-output = primary-monitor;
+          };
+          "02-study" = {
+            name = "study";
+            open-on-output = primary-monitor;
+          };
+          "03-work" = {
+            name = "work";
+            open-on-output = primary-monitor;
+          };
+          "04-comms" = {
+            name = "comms";
+            open-on-output = primary-monitor;
+          };
+          "05-games" = {
+            name = "games";
+            open-on-output = primary-monitor;
+          };
+          "06-ops" = {
+            name = "ops";
+            open-on-output = primary-monitor;
+          };
+          "07-media" = {
+            name = "media";
+            open-on-output = primary-monitor;
+          };
+        };
         layer-rules = [
           {
             matches = [ { namespace = "^awww-daemon$"; } ];
