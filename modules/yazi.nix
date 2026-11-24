@@ -93,7 +93,14 @@
         enableFishIntegration = true;
 
         plugins = {
-          mount = pkgs.yaziPlugins.mount;
+          mount = pkgs.yaziPlugins.mount.overrideAttrs (old: {
+            postPatch =
+              (old.postPatch or "")
+              + ''
+                substituteInPlace mount.yazi/main.lua \
+                  --replace-fail ':type(ui.Border.ROUNDED)' ':set("rounded")'
+              '';
+          });
           smart-enter = pkgs.yaziPlugins.smart-enter;
           ouch = pkgs.yaziPlugins.ouch;
           piper = pkgs.yaziPlugins.piper;
@@ -121,6 +128,10 @@
               rev = "3c2a9923673e0552a093afc4122473df1d427a93";
               hash = "sha256-heqqEWzJCoNt3CIJAEaWfqUX4J9BfVEw3OsU7Xjc17M=";
             };
+            postPatch = ''
+              substituteInPlace main.lua \
+                --replace-fail ':type(ui.Border.ROUNDED)' ':set("rounded")'
+            '';
           };
         };
 
