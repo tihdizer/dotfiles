@@ -27,6 +27,7 @@
       throne
       ssh
       mpv
+      honk
 
       #= Virtualization
       qemu

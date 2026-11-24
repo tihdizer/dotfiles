@@ -31,7 +31,8 @@
               "/var/lib/containers"
               "/var/lib/sunshine"
               "/var/lib/aven"
-              "/var/lib/dae"
+              "/var/lib/honk"
+              "/var/lib/xray"
               "/var/lib/OpenRGB"
               "/etc/NetworkManager/system-connections"
             ];
