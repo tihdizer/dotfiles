@@ -12,6 +12,12 @@
         home.username = "tihdizer";
         home.homeDirectory = "/home/tihdizer";
         home.stateVersion = "26.05";
+        home.sessionVariables = {
+          TERMINFO_DIRS = "$HOME/.nix-profile/share/terminfo:$HOME/.local/state/nix/profiles/profile/share/terminfo:/etc/terminfo:/lib/terminfo:/usr/share/terminfo";
+        };
+        programs.zsh.envExtra = ''
+          export TERMINFO_DIRS="$HOME/.nix-profile/share/terminfo:$HOME/.local/state/nix/profiles/profile/share/terminfo:/etc/terminfo:/lib/terminfo:/usr/share/terminfo''${TERMINFO_DIRS:+:}$TERMINFO_DIRS"
+        '';
       }
     ];
   };
