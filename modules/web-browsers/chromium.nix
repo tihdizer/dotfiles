@@ -2,21 +2,13 @@
 let
   extensionIds = [
     "cfhdojbkjhnklbpkdaibdccddilifddb" # Adblock Plus
-    "dnhpnfgdlenaccegplpojghhmaamnnfp" # Augmented Steam
     "eimadpbcbfnmbkopoojfekhnkhdbieeh" # Dark Reader
-    "gmhgdiamihghcepkeapfoeakphffcdkk" # Merriam-Webster Dictionary
-    # "onljnjnbfggbdnobigopggefjpkoojjj" # Oxford Learner's Dictionary Lookup
-    "akimgimeeoiognljlfchpbkpfbmeapkh" # Google Arts & Culture
-    "ghbmnnjooekpmoecnnnilnnbdlolhkhi" # Google Docs Offline
-    "aapbdbdomjkkjkaonfhkkikfgjllcleb" # Google Translate
-    "hkgfoiooedgoejojocmhlaklaeopbecg" # Picture-in-Picture Extension (by Google)
-    "mmioliijnhnoblpgimnlajmefafdfilb" # Shazam
-    "mnjggcdmjocbbbhaepdhchncahnbgone" # SponsorBlock for YouTube
-    "kdbmhfkmnlmbkgbabkdealhhbfhlmmon" # SteamDB
     "dbepggeogbaibhgnhhndojpepiihcmeb" # Vimium
-    # "hfjbmagddngcpeloejdejnfgbamkjaeg" # Vimium C
-    "ijgkbcbalaekboipcmaefchfjpognmog" # VK Music Saver
+    "akimgimeeoiognljlfchpbkpfbmeapkh" # Google Arts & Culture
+    "hkgfoiooedgoejojocmhlaklaeopbecg" # Picture-in-Picture Extension (by Google)
+    "mnjggcdmjocbbbhaepdhchncahnbgone" # SponsorBlock for YouTube
     "gibipneadnbflmkebnmcbgjdkngkbklb" # Windowed
+    "onljnjnbfggbdnobigopggefjpkoojjj" # Oxford Learner's Dictionary
   ];
 in
 {
@@ -24,7 +16,6 @@ in
     { pkgs, ... }:
     {
       home.packages = with pkgs; [
-        google-chrome
         zenity
       ];
 
@@ -37,17 +28,6 @@ in
         ];
         extensions = map (id: { inherit id; }) extensionIds;
       };
-
-      home.file = builtins.listToAttrs (
-        map (id: {
-          name = ".config/google-chrome/External Extensions/${id}.json";
-          value = {
-            text = builtins.toJSON {
-              external_update_url = "https://clients2.google.com/service/update2/crx";
-            };
-          };
-        }) extensionIds
-      );
     };
 
   flake.modules.nixos.chromium = {
