@@ -46,11 +46,25 @@ let
 
       upstream {
         landns: 'udp://77.88.8.8:53'
-        googledns: 'tcp://8.8.8.8:53' -> proxy
+        googledns: 'https://dns.google/dns-query' -> proxy
       }
       routing {
         request {
-          qname(suffix: ru, suffix: su, suffix: 'xn--p1ai', suffix: '1o0.net', suffix: 'yandex.net') -> landns
+          qname(
+            geosite: google,
+            geosite: google-gemini,
+            geosite: openai,
+            geosite: anthropic
+          ) -> googledns
+
+          qname(
+            geosite: category-ru,
+            suffix: ru,
+            suffix: su,
+            suffix: 'xn--p1ai',
+            suffix: '1o0.net',
+            suffix: 'yandex.net'
+          ) -> landns
 
           fallback: googledns
         }
@@ -69,7 +83,7 @@ let
       }
 
       germany {
-        filter: name(regex: '(?i).*(германия).*')
+        filter: name(regex: '(?i).*(германия|germany).*')
         policy: min_moving_avg
         final: proxy
       }
@@ -103,18 +117,6 @@ let
 
       domain(
         suffix: 1o0.net
-      ) -> direct
-
-      domain(
-        geosite: category-ru,
-        geosite: steam,
-        geosite: twitch,
-        geosite: epicgames,
-        geosite: riot,
-        geosite: escapefromtarkov,
-        geosite: faceit,
-        geosite: apple,
-        geosite: microsoft
       ) -> direct
 
       #proxy
@@ -301,6 +303,28 @@ let
       domain(
         geosite: google
       ) -> germany
+
+      dip(
+        geoip:google
+      ) -> germany
+
+      dip(
+        8.8.8.8,
+        8.8.4.4
+      ) -> proxy
+
+      #direct
+      domain(
+        geosite: category-ru,
+        geosite: steam,
+        geosite: twitch,
+        geosite: epicgames,
+        geosite: riot,
+        geosite: escapefromtarkov,
+        geosite: faceit,
+        geosite: apple,
+        geosite: microsoft
+      ) -> direct
 
       dip(
         77.88.8.8,
