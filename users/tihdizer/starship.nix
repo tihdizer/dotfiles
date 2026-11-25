@@ -119,6 +119,7 @@ in
       ...
     }:
     {
+      programs.bash.enable = lib.mkDefault true;
       programs.fish.enable = lib.mkDefault true;
       programs.zsh = {
         enable = lib.mkDefault true;
@@ -135,7 +136,7 @@ in
         enableZshIntegration = config.programs.zsh.enable;
         enableFishIntegration = config.programs.fish.enable;
         enableNushellIntegration = config.programs.fish.enable;
-        enableBashIntegration = true;
+        enableBashIntegration = config.programs.bash.enable;
         settings = settings;
       };
     };
