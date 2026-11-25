@@ -93,6 +93,10 @@
       url = "github:nix-community/stylix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    tele = {
+      url = "github:sorokin-vladimir/tele";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     torlink = {
       url = "github:baairon/torlink";
       inputs.nixpkgs.follows = "nixpkgs";

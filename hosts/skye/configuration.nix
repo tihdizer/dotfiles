@@ -39,6 +39,7 @@
       niri
       sunshine
       chromium
+      telegram
 
       #= Gaming
       steam
