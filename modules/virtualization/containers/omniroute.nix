@@ -8,111 +8,62 @@
       ...
     }:
     let
-      cfg = config.services.omniroute;
+      containerName = "omniroute";
+      image = "docker.io/diegosouzapw/omniroute:latest";
+      dataDir = "${config.home.homeDirectory}/.local/share/omniroute";
+      hostPort = 8000;
+      containerPort = 20128;
     in
     {
-      options.services.omniroute = {
-        enable = lib.mkEnableOption "OmniRoute AI Gateway Podman Service";
+      home.packages = [ pkgs.podman ];
 
-        image = lib.mkOption {
-          type = lib.types.str;
-          default = "docker.io/diegosouzapw/omniroute:latest";
-          description = "Container image for OmniRoute.";
-        };
+      programs.ssh = {
+        enable = true;
 
-        hostPort = lib.mkOption {
-          type = lib.types.port;
-          default = 8000;
-          description = "Host port to map to OmniRoute.";
-        };
-
-        containerPort = lib.mkOption {
-          type = lib.types.port;
-          default = 20128;
-          description = "Internal container port for OmniRoute.";
-        };
-
-        dataDir = lib.mkOption {
-          type = lib.types.str;
-          default = "${config.home.homeDirectory}/.local/share/omniroute";
-          description = "Host path for persistent app data.";
-        };
-
-        environmentFile = lib.mkOption {
-          type = lib.types.nullOr lib.types.path;
-          default = null;
-          description = "Path to environment file containing secrets and API keys.";
-        };
-
-        extraEnv = lib.mkOption {
-          type = lib.types.attrsOf lib.types.str;
-          default = { };
-          description = "Additional environment variables.";
+        settings.omniroute = {
+          hostname = "localhost";
+          user = config.home.username;
+          requestTTY = "force";
+          remoteCommand = "${pkgs.podman}/bin/podman exec -it ${containerName} bash";
         };
       };
 
-      config = lib.mkMerge [
-        {
-          services.omniroute.enable = lib.mkDefault true;
+      systemd.user.services.omniroute = {
+        Unit = {
+          Description = "OmniRoute AI Gateway (Podman Container)";
+          After = [ "network.target" ];
+        };
 
-          programs.ssh = {
-            enable = true;
+        Service = {
+          ExecStartPre = [
+            "${pkgs.coreutils}/bin/mkdir -p ${dataDir}"
+            "-${pkgs.podman}/bin/podman rm -f ${containerName}"
+            "${pkgs.podman}/bin/podman pull ${image}"
+          ];
 
-            settings = {
-              omniroute = {
-                hostname = "localhost";
-                user = config.home.username;
-                requestTTY = "force";
-                remoteCommand =
-                  "${pkgs.podman}/bin/podman exec -it omniroute bash";
-              };
-            };
-          };
-        }
+          ExecStart = lib.concatStringsSep " \\\n  " [
+            "${pkgs.podman}/bin/podman run --rm"
+            "--name ${containerName}"
+            "--memory=1.5g"
+            "--memory-swap=2g"
+            "-p ${toString hostPort}:${toString containerPort}"
+            "-v ${dataDir}:/app/data:U"
+            "-e PORT=${toString containerPort}"
+            "-e MALLOC_ARENA_MAX=2"
+            "-e OMNIROUTE_PRESSURE_SELF_RESTART=true"
+            "--stop-timeout=40"
+            image
+          ];
 
-        (lib.mkIf cfg.enable {
-          home.packages = [ pkgs.podman ];
+          ExecStop = "${pkgs.podman}/bin/podman stop --timeout 40 ${containerName}";
 
-          systemd.user.services.omniroute = {
-            Unit = {
-              Description = "OmniRoute AI Gateway (Podman Container)";
-              After = [ "network.target" ];
-            };
+          Restart = "always";
+          RestartSec = "5s";
+        };
 
-            Service = {
-              ExecStartPre = [
-                "${pkgs.coreutils}/bin/mkdir -p ${cfg.dataDir}"
-                "-${pkgs.podman}/bin/podman rm -f omniroute"
-                "${pkgs.podman}/bin/podman pull ${cfg.image}"
-              ];
-              ExecStart =
-                let
-                  envFlags = lib.concatStringsSep " " (
-                    lib.mapAttrsToList
-                      (k: v: "-e ${k}=${lib.escapeShellArg v}")
-                      (cfg.extraEnv // {
-                        PORT = toString cfg.containerPort;
-                      })
-                  );
-
-                  envFileFlag = lib.optionalString
-                    (cfg.environmentFile != null)
-                    "--env-file=${cfg.environmentFile}";
-                in
-                "${pkgs.podman}/bin/podman run --rm --name omniroute -p ${toString cfg.hostPort}:${toString cfg.containerPort} -v ${cfg.dataDir}:/app/data:U ${envFlags} ${envFileFlag} --stop-timeout=40 ${cfg.image}";
-
-              ExecStop =
-                "${pkgs.podman}/bin/podman stop --timeout 40 omniroute";
-
-              Restart = "always";
-              RestartSec = "5s";
-            };
-
-            Install = {
-              WantedBy = [ "default.target" ];
-            };
-          };
-        })
-      ];
+        Install = {
+          WantedBy = [ "default.target" ];
+        };
+      };
     };
 }
