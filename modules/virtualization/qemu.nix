@@ -15,6 +15,7 @@
           package = pkgs.qemu_kvm;
           runAsRoot = true;
           swtpm.enable = true;
+          vhostUserPackages = [ pkgs.virtiofsd ];
         };
       };
       # Socket activation on demand
@@ -33,6 +34,14 @@
 
       environment.systemPackages = with pkgs; [
         spice-gtk # Spice VM client
+        virtiofsd
+        (adwaita-icon-theme.overrideAttrs (_: {
+          postPatch = ''
+            substituteInPlace index.theme \
+              --replace-fail "Hidden=true" ""
+          '';
+        }))
+        adwaita-icon-theme-legacy
       ];
     };
 }
