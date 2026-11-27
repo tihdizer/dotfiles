@@ -104,6 +104,28 @@
         ];
       };
 
+      removedAssociations = {
+        "video/mp4" = [ "umpv.desktop" ];
+        "video/mkv" = [ "umpv.desktop" ];
+        "video/x-matroska" = [ "umpv.desktop" ];
+        "video/webm" = [ "umpv.desktop" ];
+        "video/quicktime" = [ "umpv.desktop" ];
+        "video/x-msvideo" = [ "umpv.desktop" ];
+        "video/x-flv" = [ "umpv.desktop" ];
+        "video/mpeg" = [ "umpv.desktop" ];
+        "video/ogg" = [ "umpv.desktop" ];
+        "audio/mp3" = [ "umpv.desktop" ];
+        "audio/mpeg" = [ "umpv.desktop" ];
+        "audio/flac" = [ "umpv.desktop" ];
+        "audio/ogg" = [ "umpv.desktop" ];
+        "audio/wav" = [ "umpv.desktop" ];
+        "audio/x-wav" = [ "umpv.desktop" ];
+        "audio/aac" = [ "umpv.desktop" ];
+        "audio/m4a" = [ "umpv.desktop" ];
+        "audio/mp4" = [ "umpv.desktop" ];
+        "audio/opus" = [ "umpv.desktop" ];
+      };
+
       defaultApps = builtins.foldl' (
         acc: desktop:
         let
@@ -122,6 +144,7 @@
       xdg.mimeApps = {
         enable = true;
         defaultApplications = defaultApps;
+        associations.removed = removedAssociations;
       };
     };
 }
