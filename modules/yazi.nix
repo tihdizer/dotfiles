@@ -46,6 +46,12 @@
         path="$4"
         out="$5"
 
+        if [[ "$path" =~ ^file://(.*) ]]; then
+          path="''${BASH_REMATCH[1]}"
+          path="''${path#localhost}"
+          printf -v path '%b' "''${path//%/\\x}"
+        fi
+
         if [ -n "$path" ] && [ -e "$path" ]; then
           target="$path"
         elif [ -n "$path" ] && [ -d "$(dirname "$path")" ]; then
@@ -78,10 +84,53 @@
       '';
 
       yazi-floating = pkgs.writeShellScriptBin "yazi-floating" ''
-        exec ${lib.getExe pkgs.kitty} \
-          --class=yazi-floating \
-          -e ${lib.getExe config.programs.yazi.package} \
-          "$@"
+        paths=()
+        for arg in "$@"; do
+          [ -z "$arg" ] && continue
+          if [[ "$arg" =~ ^file://(.*) ]]; then
+            p="''${BASH_REMATCH[1]}"
+            p="''${p#localhost}"
+            printf -v p '%b' "''${p//%/\\x}"
+          else
+            p="$arg"
+          fi
+          paths+=("$p")
+        done
+
+        if [ ''${#paths[@]} -gt 0 ]; then
+          exec ${lib.getExe pkgs.kitty} \
+            --class=yazi-floating \
+            -e ${lib.getExe config.programs.yazi.package} \
+            "''${paths[@]}"
+        else
+          exec ${lib.getExe pkgs.kitty} \
+            --class=yazi-floating \
+            -e ${lib.getExe config.programs.yazi.package}
+        fi
+      '';
+
+      yazi-filemanager-wrapper = pkgs.writeShellScriptBin "yazi-filemanager-wrapper" ''
+        method="$1"
+        shift
+
+        paths=()
+        for arg in "$@"; do
+          [ -z "$arg" ] && continue
+          if [[ "$arg" =~ ^file://(.*) ]]; then
+            p="''${BASH_REMATCH[1]}"
+            p="''${p#localhost}"
+            printf -v p '%b' "''${p//%/\\x}"
+          else
+            p="$arg"
+          fi
+          paths+=("$p")
+        done
+
+        if [ ''${#paths[@]} -gt 0 ]; then
+          exec ${yazi-floating}/bin/yazi-floating "''${paths[@]}"
+        else
+          exec ${yazi-floating}/bin/yazi-floating
+        fi
       '';
     in
     {
@@ -152,6 +201,10 @@
         settings = {
           preview = {
             image_delay = 0;
+            max_width = 1920;
+            max_height = 1080;
+            image_quality = 90;
+            image_filter = "lanczos3";
           };
 
           tasks = {
@@ -200,10 +253,10 @@
                 orphan = true;
               }
             ];
-            chrome = [
+            chromium = [
               {
-                run = "google-chrome-stable %s";
-                desc = "Google Chrome";
+                run = "chromium %s";
+                desc = "Chromium";
                 orphan = true;
               }
             ];
@@ -235,6 +288,13 @@
                 block = true;
               }
             ];
+            reveal = [
+              {
+                run = "${yazi-floating}/bin/yazi-floating %s";
+                desc = "Reveal";
+                orphan = true;
+              }
+            ];
           };
 
           open = {
@@ -253,11 +313,11 @@
               }
               {
                 mime = "application/pdf";
-                use = [ "tdf" "readest" "chrome" "firefox" "open" "reveal" ];
+                use = [ "tdf" "readest" "chromium" "firefox" "open" "reveal" ];
               }
               {
                 url = "*.pdf";
-                use = [ "tdf" "readest" "chrome" "firefox" "open" "reveal" ];
+                use = [ "tdf" "readest" "chromium" "firefox" "open" "reveal" ];
               }
               {
                 mime = "text/markdown";
@@ -269,7 +329,7 @@
               }
               {
                 mime = "image/*";
-                use = [ "imv" "chrome" "open" "reveal" ];
+                use = [ "imv" "chromium" "open" "reveal" ];
               }
               {
                 mime = "{audio,video}/*";
@@ -277,15 +337,15 @@
               }
               {
                 mime = "text/html";
-                use = [ "chrome" "firefox" "edit" "open" "reveal" ];
+                use = [ "chromium" "firefox" "edit" "open" "reveal" ];
               }
               {
                 url = "*.{html,htm}";
-                use = [ "chrome" "firefox" "edit" "open" "reveal" ];
+                use = [ "chromium" "firefox" "edit" "open" "reveal" ];
               }
               {
                 mime = "application/{json,ndjson,javascript,wine-extension-ini,xml,toml,yaml,x-yaml}";
-                use = [ "edit" "chrome" "reveal" ];
+                use = [ "edit" "chromium" "reveal" ];
               }
               {
                 mime = "text/csv";
@@ -520,7 +580,31 @@
         '';
       };
 
+      xdg.configFile."org.freedesktop.FileManager1.common/config" = {
+        text = ''
+          cmd=${yazi-filemanager-wrapper}/bin/yazi-filemanager-wrapper
+        '';
+      };
+
+      systemd.user.services.file-manager-dbus = {
+        Unit = {
+          Description = "File Manager DBus Service";
+          PartOf = [ "graphical-session.target" ];
+          After = [ "graphical-session.target" ];
+        };
+        Service = {
+          Type = "dbus";
+          BusName = "org.freedesktop.FileManager1";
+          ExecStart = "${pkgs.org-freedesktop-filemanager1-common}/libexec/file_manager_dbus";
+          Restart = "on-failure";
+        };
+        Install = {
+          WantedBy = [ "graphical-session.target" ];
+        };
+      };
+
       home.packages = with pkgs; [
+        org-freedesktop-filemanager1-common # DBus file manager interface (ShowItems, ShowFolders)
         glow # Terminal markdown viewer / pager
         miller # Fast tabular data processor (CSV, TSV, JSON)
         tabiew # Lightweight terminal UI for viewing tabular data
