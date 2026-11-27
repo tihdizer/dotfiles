@@ -11,9 +11,8 @@
         timr-tui # TUI to organize your time: Pomodoro, Tabata, Countdown, Timer, Event
         readest # E-book reader
         onlyoffice-desktopeditors # Office suite
-        helix
-        feishin
-        pureref
+        pureref # Reference image viewer
+        praat # Phonetics and speech analysis software
       ];
     };
 }
