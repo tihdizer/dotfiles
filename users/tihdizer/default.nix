@@ -23,6 +23,7 @@
         dev
         firefox
         chromium
+        chrome
         bottom
         yazi
         mpv

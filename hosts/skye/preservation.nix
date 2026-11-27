@@ -115,6 +115,7 @@
                 ".local/share/Anki2"
 
                 # Communication, Browsers & Mail
+                ".config/chromium-workspaces"
                 ".local/share/TelegramDesktop"
                 ".local/share/vesktop"
                 ".config/vesktop"

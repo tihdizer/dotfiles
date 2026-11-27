@@ -14,6 +14,7 @@
         tihdizer-niri-settings
         tihdizer-niri-startup
         tihdizer-niri-windowrules
+        tihdizer-niri-workspaces
         nirimap
         workspace-osd
       ];
@@ -112,7 +113,7 @@
             "org.freedesktop.impl.portal.Screenshot" = [ "gnome" ];
           };
         };
-        xdgOpenUsePortal = true;
+        xdgOpenUsePortal = false;
       };
 
       #= Used Packages

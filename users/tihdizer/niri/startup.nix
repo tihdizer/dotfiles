@@ -14,8 +14,6 @@
         { sh = "uwsm finalize"; }
         { sh = "daily-art-wallpaper"; }
         { command = [ "${pkgs.swaylock-effects}/bin/swaylock" "-f" ]; }
-        { command = [ "${pkgs.google-chrome}/bin/google-chrome" ]; }
-        { command = [ "${pkgs.telegram-desktop}/bin/Telegram" ]; }
       ];
     };
 }

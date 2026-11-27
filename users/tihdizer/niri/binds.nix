@@ -1,4 +1,4 @@
-{ ... }:
+{ inputs, ... }:
 {
   flake.modules.homeManager.tihdizer-niri-binds =
     {
@@ -9,8 +9,6 @@
     }:
     let
       inherit (lib) getExe mkMerge;
-      browser = getExe pkgs.google-chrome;
-      telegram = getExe pkgs.telegram-desktop;
       wpctl = "${pkgs.wireplumber}/bin/wpctl";
       playerctl = "${pkgs.playerctl}/bin/playerctl";
       launcher = getExe pkgs.fuzzel;
@@ -20,6 +18,7 @@
       niri = getExe config.programs.niri.package;
       jq = getExe pkgs.jq;
       zellij = getExe pkgs.zellij;
+      tele = getExe inputs.tele.packages.${pkgs.stdenv.hostPlatform.system}.default;
       notifySend = getExe pkgs.libnotify;
       castWindow = getExe (
         pkgs.writeShellScriptBin "niri-cast-window" ''
@@ -47,36 +46,6 @@
         pkgs.writeShellScriptBin "niri-cast-clear" ''
           ${niri} msg action clear-dynamic-cast-target
           ${notifySend} -h string:synchronous:dynamic-cast -a "niri" -i video-display "Dynamic Cast" "Target cleared"
-        ''
-      );
-      popStash = getExe (
-        pkgs.writeShellScriptBin "niri-pop-stash" ''
-          STASH_WS_ID="$(${niri} msg -j workspaces 2>/dev/null | ${jq} -r 'first(.[] | select(.name == "stash") | .id) // empty')"
-          if [ -z "$STASH_WS_ID" ]; then
-            exit 0
-          fi
-
-          CURRENT_WS_ID="$(${niri} msg -j workspaces 2>/dev/null | ${jq} -r 'first(.[] | select(.is_focused == true) | .id) // empty')"
-          if [ -z "$CURRENT_WS_ID" ] || [ "$CURRENT_WS_ID" = "$STASH_WS_ID" ]; then
-            exit 0
-          fi
-
-          CURRENT_WS_REF="$(${niri} msg -j workspaces 2>/dev/null | ${jq} -r 'first(.[] | select(.is_focused == true) | (.name // (.idx | tostring))) // empty')"
-          if [ -z "$CURRENT_WS_REF" ]; then
-            exit 0
-          fi
-
-          WIN_ID="$(${niri} msg -j windows 2>/dev/null | ${jq} -r --argjson stash_ws "$STASH_WS_ID" '[.[] | select(.workspace_id == $stash_ws)] | sort_by([.focus_timestamp.secs // 0, .focus_timestamp.nanos // 0, .id]) | last | .id // empty')"
-          if [ -n "$WIN_ID" ]; then
-            ${niri} msg action move-window-to-workspace --window-id "$WIN_ID" "$CURRENT_WS_REF"
-            ${niri} msg action focus-window --id "$WIN_ID"
-          fi
-        ''
-      );
-      workspaceTerm = getExe (
-        pkgs.writeShellScriptBin "niri-workspace-term" ''
-          WS_NAME="$(${niri} msg -j workspaces 2>/dev/null | ${jq} -r 'first(.[] | select(.is_focused == true) | (.name // (.idx | tostring))) // "main"')"
-          exec ${term} -e ${zellij} attach -c "$WS_NAME"
         ''
       );
     in
@@ -153,7 +122,6 @@
             };
 
             #= Launch/Spawn Software
-            "Mod+T".action.spawn = [ workspaceTerm ];
             "Mod+Shift+T".action.spawn = [
               term
               "--class"
@@ -178,8 +146,13 @@
               "-e"
               (getExe config.programs.yazi.package)
             ];
-            "Mod+B".action.spawn = [ browser ];
-            "Mod+A".action.spawn = [ telegram ];
+            "Mod+A".action.spawn = [ 
+              term
+              "--class"
+              "tele"
+              "-e"
+              tele
+            ];
             "Mod+D".action.spawn = [ launcher ];
             "Mod+Y".action.spawn = [
               copyq
@@ -268,34 +241,6 @@
             "Mod+Shift+Ctrl+L".action = move-column-to-monitor-right;
             "Mod+Shift+Ctrl+K".action = move-column-to-monitor-up;
             "Mod+Shift+Ctrl+J".action = move-column-to-monitor-down;
-
-            "Mod+1".action.focus-workspace = "personal";
-            "Mod+2".action.focus-workspace = "comms";
-            "Mod+3".action.focus-workspace = "study";
-            "Mod+4".action.focus-workspace = "work";
-            "Mod+5".action.focus-workspace = "games";
-            "Mod+6".action.focus-workspace = "ops";
-            "Mod+7".action.focus-workspace = "media";
-            "Mod+8".action.focus-workspace = 8;
-            "Mod+9".action.focus-workspace = 9;
-            "Mod+S".action.focus-workspace = "stash";
-            "Mod+Ctrl+1".action.move-window-to-workspace = "personal";
-            "Mod+Ctrl+2".action.move-window-to-workspace = "comms";
-            "Mod+Ctrl+3".action.move-window-to-workspace = "study";
-            "Mod+Ctrl+4".action.move-window-to-workspace = "work";
-            "Mod+Ctrl+5".action.move-window-to-workspace = "games";
-            "Mod+Ctrl+6".action.move-window-to-workspace = "media";
-            "Mod+Ctrl+7".action.move-window-to-workspace = 7;
-            "Mod+Ctrl+8".action.move-window-to-workspace = 8;
-            "Mod+Ctrl+9".action.move-window-to-workspace = 9;
-            "Mod+Ctrl+0".action.move-window-to-workspace = "ops";
-            "Mod+Ctrl+S".action.move-window-to-workspace = [
-              { focus = false; }
-              "stash"
-            ];
-            "Mod+Shift+S".action.spawn = [ popStash ];
-
-            "Mod+Tab".action = focus-workspace-previous;
           }
         ];
     };
