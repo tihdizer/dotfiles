@@ -77,13 +77,13 @@ let
 
     group {
       proxy {
-        filter: !name(regex: '(?i).*(support|info|chat|канал|⛔️|россия|швеция).*')
+        filter: !name(regex: '(?i).*(support|info|chat|канал|⛔️|россия|швеция|torrent).*')
         policy: min_avg10
         final: direct
       }
 
       germany {
-        filter: name(regex: '(?i).*(германия|germany).*')
+        filter: name(regex: '(?i).*(германия|germany).*') && !name(regex: '(?i).*(игровой).*')
         policy: min_moving_avg
         final: proxy
       }
@@ -157,6 +157,7 @@ let
         suffix: givefreely.com,
         suffix: glotorrents.pw,
         suffix: englishclub.com,
+        suffix: handykayak.com,
         suffix: healthapp.google,
         suffix: hetzner.com,
         suffix: hetzner.de,
