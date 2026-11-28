@@ -77,7 +77,7 @@ let
 
     group {
       proxy {
-        filter: !name(regex: '(?i).*(support|info|chat|канал|⛔️|россия).*')
+        filter: !name(regex: '(?i).*(support|info|chat|канал|⛔️|россия|швеция).*')
         policy: min_avg10
         final: direct
       }
@@ -244,6 +244,7 @@ let
       pname(
         .Telegram-wrapped,
         Telegram,
+        firefox,
         tele,
         .Discord-wrapped,
         discord,
