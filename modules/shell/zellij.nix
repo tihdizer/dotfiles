@@ -46,7 +46,7 @@ let
           copy_clipboard "system"
           show_release_notes false
           scroll_buffer_size 50000
-          scrollback_editor "${pkgs.neovim}/bin/nvim"
+          scrollback_editor "nvim"
         '';
       };
     };
