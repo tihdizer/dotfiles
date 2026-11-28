@@ -12,7 +12,6 @@
         readest # E-book reader
         onlyoffice-desktopeditors # Office suite
         pureref # Reference image viewer
-        praat # Phonetics and speech analysis software
       ];
     };
 }
