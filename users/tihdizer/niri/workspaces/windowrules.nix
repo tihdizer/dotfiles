@@ -106,6 +106,16 @@
           };
           open-on-workspace = "media";
         }
+
+        {
+          matches = [
+            { app-id = "mpv"; }
+          ];
+          default-column-width = {
+            proportion = 1. ;
+          };
+          open-on-workspace = "media";
+        }
       ];
     };
 }
