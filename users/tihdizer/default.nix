@@ -32,7 +32,6 @@
         nixcord
         shell
         television
-        omniroute
         jcode
         usb
         bluetooth
